@@ -7,7 +7,7 @@ function App() {
   const [handle, setHandle] = useState("");
   const [pfp, setPfp] = useState("");
 
-  const fetchBskyPfp = async (handle) => {
+  const fetchBskyPfp = async (handle: string) => {
     try {
       const apiUrl = `${baseApiUrl}?actor=${encodeURIComponent(handle)}`;
 
@@ -47,6 +47,13 @@ function App() {
               alt="Profile"
               className="w-32 h-32 rounded-full border border-gray-700"
             />
+            <a
+              href={pfp}
+              download="profile_picture.jpg"
+              className="mt-4 bg-[#191919] border border-gray-700 rounded-md p-2 text-xs text-white font-mono hover:bg-[#1f1f1f] hover:border-gray-700"
+            >
+              download
+            </a>
             <button
               className="mt-4 bg-[#191919] border border-gray-700 rounded-md p-2 text-xs text-white font-mono hover:bg-[#1f1f1f] hover:border-gray-700"
               onClick={refreshPage}
