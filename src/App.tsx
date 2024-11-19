@@ -31,13 +31,41 @@ function App() {
     setPfp("");
   };
 
+  const downloadImage = async (url: string) => {
+    try {
+      const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+      const response = await fetch(proxyUrl + url, {
+        headers: {
+          Origin: "*",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch the image.");
+      }
+
+      const blob = await response.blob();
+      const link = document.createElement("a");
+
+      const blobUrl = URL.createObjectURL(blob);
+
+      const fileName = handle + ".jpg";
+      link.download = fileName || "profile_picture.jpg";
+
+      link.href = blobUrl;
+
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
+
   return (
     <div className="bg-[#000] flex flex-col justify-center items-center h-screen">
-      <img
-        src="./logo.jpg"
-        alt="emo swag girl"
-        className="text-white w-[6em]"
-      ></img>
       <h1 className="text-white font-mono text-3xl">emo-swag</h1>
       <div className="mt-4 home max-w-4xl mx-auto">
         {pfp ? (
@@ -47,13 +75,18 @@ function App() {
               alt="Profile"
               className="w-32 h-32 rounded-full border border-gray-700"
             />
-            <a
-              href={pfp}
-              download="profile_picture.jpg"
+            <button
               className="mt-4 bg-[#191919] border border-gray-700 rounded-md p-2 text-xs text-white font-mono hover:bg-[#1f1f1f] hover:border-gray-700"
+              onClick={() => window.open(pfp, "_blank")}
+            >
+              view
+            </button>
+            <button
+              className="mt-4 bg-[#191919] border border-gray-700 rounded-md p-2 text-xs text-white font-mono hover:bg-[#1f1f1f] hover:border-gray-700"
+              onClick={() => downloadImage(pfp)} // Triggering the download
             >
               download
-            </a>
+            </button>
             <button
               className="mt-4 bg-[#191919] border border-gray-700 rounded-md p-2 text-xs text-white font-mono hover:bg-[#1f1f1f] hover:border-gray-700"
               onClick={refreshPage}
@@ -62,7 +95,12 @@ function App() {
             </button>
           </div>
         ) : (
-          <>
+          <div className="flex flex-col justify-center items-center">
+            <img
+              src="./logo.jpg"
+              alt="emo swag girl"
+              className="text-white w-[6em] mb-4"
+            ></img>
             <div className="input-container">
               <input
                 id="link-area"
@@ -86,7 +124,7 @@ function App() {
                 search
               </button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
